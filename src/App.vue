@@ -3,7 +3,7 @@ import { computed, onMounted, onUnmounted, reactive, ref, nextTick } from 'vue';
 
 const rows = ref([])
 const cols = ref([])
-const ROWS_QTD = 100
+const ROWS_QTD = 100_000
 const COLS_QTD = 10
 const container = ref(null)
 const table = ref(null)
@@ -75,9 +75,9 @@ const visibleItems = computed(() => {
   <div class="table-widget">
     <div>
       <table ref="table" class="overflow-y-auto block">
-        <thead>
+        <thead class="sticky top-0 bg-white z-10">
           <tr>
-            <th v-for="col, index in cols" class="border-b border-black" :style="{ width: col.width + 'px' }">H {{ col.id }}</th>
+            <th v-for="col, index in cols" class="border-b border-black bg-white" :style="{ width: col.width + 'px' }">H {{ col.id }}</th>
           </tr>
         </thead>
         <tbody ref="container" id="table-rows" class="relative divide-y" :style="{height: ROWS_QTD * lineHeight + 'px'}">
