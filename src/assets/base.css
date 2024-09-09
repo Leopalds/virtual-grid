@@ -19,6 +19,8 @@
   --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
   --vt-c-text-dark-1: var(--vt-c-white);
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+  --gray: #A0A7B1;
+  --gray-mid: #F1F2F6;
 }
 
 /* semantic color variables for this project */
@@ -59,28 +61,93 @@
 }
 
 body {
-  min-height: 100vh;
-  color: var(--color-text);
-  background: var(--color-background);
-  transition:
-    color 0.5s,
-    background-color 0.5s;
-  line-height: 1.6;
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
-    sans-serif;
-  font-size: 15px;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: sans-serif;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 1rem;
+  background: var(
+      --background
+  );
 }
+
+.table-widget {
+  border-radius: 1rem;
+  background-color: var(
+      --table-background);
+  padding: 1.5rem;
+  margin: 1rem;
+  max-width: 50rem;
+  max-height: 47.5rem;
+  border: 2px solid var(
+      --gray-background);
+  box-shadow: 0px 4px 16px 0px 
+      rgba(148, 156, 169, 0.15);
+  text-align: left;
+}
+
+.table-widget table {
+  max-width: 40rem;
+  max-height: 37.5rem;
+  display: block;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.table-widget th {
+  padding: 0.75rem 0.75rem 0.75rem 0.5rem;
+  font-size: 0.875rem;
+  color: var(--gray);
+  width: fit-content;
+  white-space: nowrap;
+  background-color: var(
+      --th-background);
+}
+
+.table-widget tfoot {
+  margin-top: 1rem;
+  border-top: 2px solid var(
+      --gray-background);
+}
+
+.table-widget td {
+  padding: 0.75rem 0.75rem 0.75rem 0.5rem;
+  vertical-align: middle;
+  white-space: nowrap;
+  border-bottom: 2px solid var(
+      --gray-background);
+}
+
+.table-row-count {
+  font-size: 0.8rem;
+  font-weight: 700;
+  background-color: var(
+      --gray-mid);
+  padding: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 1rem;
+  border-radius: 0.5rem;
+}
+
+.table-widget {
+  min-height: 5rem;
+}
+
+
+.table-wrapper::-webkit-scrollbar {
+  height: 0.75rem;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: var(--gray-mid);
+  border-radius: 0.45rem;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--gray);
+  border-radius: 0.4rem;
+}
+
