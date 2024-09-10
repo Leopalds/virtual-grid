@@ -15,7 +15,7 @@ const range = reactive({
   to: 0
 });
 
-const extraItens = 6
+const extraItens = 3
 const minHeight = 50
 const colWidth = 100
 
@@ -56,8 +56,8 @@ const renderRows = () => {
     }
   }
 
-  range.from = from;
-  range.to = to;
+  range.from = Math.max(0, from - extraItens)
+  range.to = Math.min(ROWS_QTD - 1, to + extraItens)
 }
 
 onMounted(() => {
