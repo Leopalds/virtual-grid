@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, ref, nextTick } from 'vue';
+import throttle from 'lodash/throttle'
 
 const rows = ref([])
 const cols = ref([])
@@ -62,6 +63,8 @@ const renderRows = () => {
   range.to = Math.min(ROWS_QTD - 1, to + extraItens)
 }
 
+const throttledRenderRows = throttle(renderRows, 100)
+
 const updateRowHeight = (index, element) => {
   const realHeight = element.getBoundingClientRect().height
   
@@ -70,7 +73,7 @@ const updateRowHeight = (index, element) => {
     rowHeights.value[index] = realHeight;
     totalTableHeight.value += heightDifference;
 
-    renderRows();
+    throttledRenderRows();
   }
 }
 
@@ -93,12 +96,13 @@ onMounted(() => {
     cols.value[j] = { id: j + 1, width: colWidth }
   }
 
-  nextTick(() => renderRows())
-  table.value.addEventListener("scroll", renderRows)
+  nextTick(() => throttledRenderRows())
+  //Throttle
+  table.value.addEventListener("scroll", throttledRenderRows)
 })
 
 onUnmounted(() => {
-  table.value.removeEventListener("scroll", renderRows)
+  table.value.removeEventListener("scroll", throttledRenderRows)
 })
 
 
