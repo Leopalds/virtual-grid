@@ -2,8 +2,6 @@
 import { computed, onMounted, onUnmounted, reactive, ref, nextTick } from 'vue';
 
 const rows = ref([])
-const rowHeights = ref([])
-const totalTableHeight = ref(0)
 const cols = ref([])
 const ROWS_QTD = 100_000
 const COLS_QTD = 10
@@ -18,6 +16,10 @@ const range = reactive({
 const extraItens = 3
 const minHeight = 50
 const colWidth = 100
+
+const rowHeights = ref([])
+const totalTableHeight = ref(0)
+
 
 const renderRows = () => {
   const windowHeight = table.value.clientHeight;
@@ -40,7 +42,7 @@ const renderRows = () => {
   let to = 0;
   
   for (let i = 0; i < ROWS_QTD; i++) {
-    totalHeight += rowHeights.value[i];
+    totalHeight += rowHeights.value[i] || minHeight
     if (totalHeight >= offHeight) {
       from = i;
       break;
@@ -49,7 +51,7 @@ const renderRows = () => {
 
   totalHeight = 0;
   for (let i = from; i < ROWS_QTD; i++) {
-    totalHeight += rowHeights.value[i];
+    totalHeight += rowHeights.value[i] || minHeight
     if (totalHeight >= visibleArea) {
       to = i;
       break;
@@ -60,16 +62,37 @@ const renderRows = () => {
   range.to = Math.min(ROWS_QTD - 1, to + extraItens)
 }
 
+const updateRowHeight = (index, element) => {
+  const realHeight = element.getBoundingClientRect().height
+  
+  if(realHeight !== rowHeights.value[index]){
+    const heightDifference = realHeight - rowHeights.value[index] || minHeight;
+    rowHeights.value[index] = realHeight;
+    totalTableHeight.value += heightDifference;
+
+    renderRows();
+  }
+}
+
+const onRowRendered = (index, element) => {
+  if (rowHeights.value[index] === minHeight) {
+    updateRowHeight(index, element);
+  }
+};
+
 onMounted(() => {
   for (let i = 0; i < ROWS_QTD; i++) {
     const height = Math.floor(Math.random() * (200 - 50 + 1)) + 50
     rows.value[i] = { id: i + 1, height }
-    rowHeights.value[i] = height
+    rowHeights.value[i] = minHeight
   }
+
+  totalTableHeight.value = rowHeights.value.length * minHeight;
+
   for (let j = 0; j < COLS_QTD; j++) {
     cols.value[j] = { id: j + 1, width: colWidth }
   }
-  totalTableHeight.value = rowHeights.value.reduce((acc, height) => acc + height, 0);
+
   nextTick(() => renderRows())
   table.value.addEventListener("scroll", renderRows)
 })
@@ -89,12 +112,11 @@ const visibleItems = computed(() => {
 
 const getTopOffset = (index) => {
   let offset = 0
-  for(let i = 0; i < index; i++){
-    offset += rowHeights.value[i]
+  for (let i = 0; i < index; i++) {
+    offset += rowHeights.value[i] || minHeight;
   }
   return offset
 }
-
 </script>
 
 <template>
@@ -107,12 +129,15 @@ const getTopOffset = (index) => {
           </tr>
         </thead>
         <tbody ref="container" id="table-rows" class="relative divide-y" :style="{height: totalTableHeight + 'px'}">
-          <tr v-for="i in visibleItems" class="absolute" :style="{
-            position: 'absolute',
-            top: getTopOffset(i?.id - 1) + 'px',
-            width: '100%',
-            height: i?.height + 'px'
-          }">
+          <tr v-for="i in visibleItems"
+            :style="{
+              position: 'absolute',
+              top: getTopOffset(i?.id - 1) + 'px',
+              width: '100%',
+              height: i?.height + 'px'
+            }"
+            :ref="el => $nextTick(() => onRowRendered(i?.id - 1, el))"
+          >
             <td v-for="col in cols">{{ `Row ${i.id}, Col ${col.id}` }}</td>
           </tr>
         </tbody>
